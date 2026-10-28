@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Exogent · Ycellbio PRP · RegExo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: длинная прокрутка из трёх «буклетов» (Exogent, Ycellbio PRP, RegExo);
+   каждая панель повторяет разворот печатной брошюры: синие заголовки, голубые плашки, пилюли, круги «Фаза». */
+:root{
+  --bg:#FFFFFF; --fg:#1B2433; --muted:#5B6B84;
+  --blue:#2D5CA8; --blue-deep:#1F4484; --blue-ink:#2D5CA8;
+  --tile:#D9E7F6; --tile-2:#EEF4FB; --line:#C9D8EC;
+  --paper:#FFFFFF; --paper-fg:#1B2433;
+  --pass:#3E8E85; --cream:#FBF2DC;
+  --teal:#3A8A9A; --teal-deep:#2A6B78;
+  --display:"Montserrat","Arial Black",Arial,sans-serif;
+  --body:"Manrope","Segoe UI",Roboto,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1726; --fg:#E7EEF8; --muted:#A3B4CC;
+    --blue:#8DB0EC; --blue-deep:#2F5CA3; --blue-ink:#A9C4F2;
+    --tile:#17294A; --tile-2:#122036; --line:#2B4169;
+    --pass:#4FB3A6; --cream:#2A2A1F;
+    --teal:#5FB3C4; --teal-deep:#2A6B78;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1726; --fg:#E7EEF8; --muted:#A3B4CC;
+  --blue:#8DB0EC; --blue-deep:#2F5CA3; --blue-ink:#A9C4F2;
+  --tile:#17294A; --tile-2:#122036; --line:#2B4169;
+  --pass:#4FB3A6; --cream:#2A2A1F;
+  --teal:#5FB3C4; --teal-deep:#2A6B78;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;margin:0}
+img{max-width:100%;height:auto;display:block}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;margin:0;text-wrap:balance}
+p{margin:0}
+ul{margin:0;padding-left:1.15em}
+li{margin:.25em 0}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+
+/* ---------- верхняя навигация ---------- */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);border-bottom:1px solid var(--line)}
+.topbar .in{max-width:1120px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.5rem;padding-block:.65rem;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.brand{font-family:var(--display);font-weight:800;font-size:.95rem;letter-spacing:.04em;text-transform:uppercase;color:var(--blue)}
+.topbar nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;font-size:.9rem;font-weight:600}
+.topbar nav a{text-decoration:none;color:var(--muted);padding:.2rem 0;border-bottom:2px solid transparent}
+.topbar nav a:hover{color:var(--blue);border-color:var(--blue)}
+
+/* ---------- панели ---------- */
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.brochure{padding-block:2.5rem 1rem}
+.brochure + .brochure{border-top:1px solid var(--line)}
+.panel{padding-block:2rem}
+.panel + .panel{border-top:1px dashed var(--line)}
+.eyebrow{font-family:var(--display);font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.h-brochure{font-size:clamp(1.4rem,3.2vw,2.1rem);font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.02em;text-align:center}
+.h-brochure::after{content:"";display:block;width:min(100%,520px);height:3px;background:var(--blue);margin:.8rem auto 0}
+.h-brochure.left{text-align:left}
+.h-brochure.left::after{margin-left:0}
+#regexo .h-brochure{color:var(--teal)}
+#regexo .h-brochure::after{background:var(--teal)}
+.h-tile{font-size:1.05rem;font-weight:800;text-transform:uppercase;color:var(--blue);letter-spacing:.02em}
+.lead{font-size:1.05rem;max-width:62ch}
+.muted{color:var(--muted)}
+.cols{display:grid;gap:1.5rem}
+.cols>*{min-width:0}
+@media (min-width:760px){.cols-2{grid-template-columns:1fr 1fr}.cols-3{grid-template-columns:repeat(3,1fr)}.cols-4{grid-template-columns:repeat(4,1fr)}.cols-1-2{grid-template-columns:1fr 1.4fr}.cols-2-1{grid-template-columns:1.4fr 1fr}}
+.tile{background:var(--tile);border-radius:22px;padding:1.3rem 1.4rem;display:grid;gap:.8rem;align-content:start}
+.tile ul{font-weight:500}
+.tile-soft{background:var(--tile-2)}
+.photo{border-radius:18px;overflow:hidden;background:var(--tile-2)}
+.photo img{width:100%;height:100%;object-fit:cover}
+
+/* ---------- обложка ---------- */
+.cover{display:grid;gap:1.5rem;align-items:end}
+@media (min-width:760px){.cover{grid-template-columns:1.1fr 1fr;align-items:center}}
+.cover .photo{border-radius:0 0 90px 0}
+.cover h1{font-size:clamp(2rem,5vw,3.6rem);font-weight:800;color:var(--blue);letter-spacing:-.01em}
+.cover .sub{font-size:clamp(1.05rem,2vw,1.35rem);font-weight:500;max-width:34ch;margin-top:.8rem}
+.cover .sub.caps{text-transform:uppercase;font-family:var(--display);font-weight:600;letter-spacing:.04em;font-size:clamp(.95rem,1.6vw,1.1rem);color:var(--fg)}
+.crosses{display:flex;gap:.5rem;margin-top:1.2rem}
+.crosses i{display:inline-block;width:18px;height:18px;position:relative}
+.crosses i::before,.crosses i::after{content:"";position:absolute;background:var(--blue);left:0;right:0;top:40%;height:20%}
+.crosses i::after{transform:rotate(90deg)}
+.crosses i:nth-child(2){width:28px;height:28px}
+.crosses i:nth-child(3){width:12px;height:12px;align-self:flex-end}
+
+/* ---------- Exogent: эффекты ---------- */
+.effects{position:relative;display:grid;gap:1.1rem}
+@media (min-width:760px){.effects{grid-template-columns:1fr 1fr}}
+.effects .center{display:none}
+@media (min-width:760px){.effects .center{display:grid;place-items:center;position:absolute;left:50%;top:50%;width:92px;height:92px;transform:translate(-50%,-50%);background:var(--bg);border-radius:50%;box-shadow:0 0 0 6px var(--bg)}}
+.effects .center svg{width:72px;height:72px}
+
+/* ---------- COA ---------- */
+.coa{display:grid;gap:1.2rem}
+@media (min-width:860px){.coa{grid-template-columns:1fr 1.5fr}}
+.coa>*{min-width:0}
+.box{border:1.5px solid var(--line);border-radius:16px;padding:1.2rem 1.3rem;display:grid;gap:.8rem;align-content:start;min-width:0}
+.box h3{font-size:1.05rem;font-weight:700}
+.box h3 b{font-weight:800;color:var(--blue)}
+.safety-list{list-style:none;padding:0;display:grid;gap:.7rem}
+.safety-list li{display:flex;gap:.75rem;align-items:flex-start;font-weight:600}
+.safety-list svg{flex:0 0 34px;width:34px;height:34px}
+.table-wrap{overflow-x:auto;min-width:0;max-width:100%}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{padding:.6rem .7rem;text-align:left;vertical-align:middle;border-bottom:1px solid var(--line)}
+th{font-family:var(--display);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+td:first-child{font-weight:700}
+.pass{display:inline-block;background:var(--pass);color:#fff;font-family:var(--display);font-size:.72rem;font-weight:800;letter-spacing:.08em;padding:.25rem .6rem;border-radius:6px}
+small.spec{color:var(--muted)}
+
+/* ---------- блок-схема ---------- */
+.flow{display:grid;gap:1rem}
+@media (min-width:760px){.flow{grid-template-columns:repeat(4,1fr)}}
+.step{background:var(--paper);color:var(--paper-fg);border-radius:14px;padding:1rem;display:grid;gap:.6rem;align-content:start;border:1px solid var(--line);position:relative}
+.step .num{font-family:var(--display);font-weight:800;font-size:.9rem;text-transform:uppercase;color:#1F4484;letter-spacing:.02em}
+.step .ico{height:120px;display:grid;place-items:center;overflow:hidden;border-radius:10px;background:#fff}
+.step .ico img{max-height:120px;width:auto;object-fit:contain}
+.step p{font-size:.92rem}
+.step .out{margin-top:.2rem;padding-top:.6rem;border-top:1px dashed var(--line);font-size:.82rem;font-weight:700;color:#5B6B84;text-transform:uppercase;letter-spacing:.05em}
+@media (min-width:760px){.step:not(:last-child)::after{content:"";position:absolute;right:-1rem;top:50%;width:0;height:0;border:10px solid transparent;border-left:12px solid var(--blue);transform:translate(2px,-50%)}}
+
+.why{display:grid;gap:1.1rem}
+.why .item{display:grid;grid-template-columns:22px 1fr;gap:.8rem;align-items:start}
+.why .tri{width:0;height:0;border:11px solid transparent;border-left:16px solid var(--blue);margin-top:.35rem}
+.why h4{font-size:1.02rem;font-weight:700;color:var(--blue)}
+.why p{margin-top:.25rem}
+
+/* ---------- PRP ---------- */
+.stripe{display:inline-block;width:60px;height:12px;background:var(--blue);transform:skewX(-35deg)}
+.kp{font-family:var(--display);font-weight:700;color:var(--blue);margin-top:.6rem}
+.layers-row{display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:center}
+.layers-row>*{min-width:0}
+.layers{display:grid;grid-template-columns:auto 1fr;gap:.8rem 1rem;align-items:center}
+.layers>*{min-width:0}
+@media (max-width:559px){
+  .layers-row{grid-template-columns:1fr}
+  .layers{grid-template-columns:1fr;gap:.2rem}
+  .layers .v{margin-bottom:.6rem}
+}
+.layers .k{font-family:var(--display);font-weight:800;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;color:var(--blue)}
+.layers .v{font-size:.9rem;color:var(--muted)}
+.gf{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.gf span{background:var(--blue-deep);color:#fff;font-family:var(--display);font-weight:700;font-size:.8rem;border-radius:50%;width:54px;height:54px;display:grid;place-items:center;letter-spacing:.02em}
+
+.phases{display:grid;gap:1.1rem}
+.phase{display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:center;border:1.5px solid var(--blue-deep);border-radius:16px;padding:1rem 1.2rem}
+.phase:nth-child(even){grid-template-columns:auto 1fr}
+.phase:nth-child(even) .ball{order:-1}
+.phase h4{font-size:1.02rem;font-weight:700;color:var(--blue)}
+.phase p{font-size:.93rem;margin-top:.25rem}
+.ball{width:84px;height:84px;border-radius:50%;background:var(--blue-deep);color:#fff;display:grid;place-content:center;text-align:center;font-family:var(--display);font-weight:700;font-size:.78rem;line-height:1.2}
+.ball b{display:block;font-size:1.1rem;font-weight:800}
+
+.how{display:grid;gap:1.2rem}
+.how .row{display:grid;grid-template-columns:64px 1fr;gap:1rem;align-items:center}
+.drop{width:64px;height:64px;border-radius:50% 50% 50% 10px;background:var(--blue-deep);display:grid;place-items:center;color:#fff}
+.drop svg{width:38px;height:38px}
+.how h4{font-size:1.02rem;font-weight:800;text-transform:uppercase;color:var(--blue);letter-spacing:.02em}
+.process{background:var(--tile-2);border-radius:18px;padding:1.3rem 1rem;display:grid;gap:1rem;text-align:center}
+.process h3{font-size:1.2rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--blue)}
+.process .ring{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+@media (min-width:560px){.process .ring{grid-template-columns:repeat(4,1fr)}}
+.process figure{margin:0;display:grid;gap:.5rem;justify-items:center;min-width:0}
+.process img{width:min(100%,130px);aspect-ratio:1;border-radius:50%;object-fit:cover}
+.process figcaption{font-family:var(--display);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+.checks{list-style:none;padding:0;display:grid;gap:.8rem;font-weight:600}
+.checks li{display:grid;grid-template-columns:28px 1fr;gap:.7rem;align-items:start}
+.checks svg{width:28px;height:28px;margin-top:.05rem}
+
+.pillhead{display:inline-block;background:linear-gradient(-70deg,transparent 12px,var(--blue-deep) 12px);color:#fff;font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:.95rem;letter-spacing:.03em;padding:.5rem 2rem .5rem 1.2rem;border-radius:999px 0 0 999px}
+.adv{display:grid;gap:1.3rem}
+.adv p{padding-left:1.2rem;max-width:60ch}
+.hexes{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:.8rem;align-items:end}
+.hex{clip-path:polygon(26% 1%,74% 1%,99% 50%,74% 99%,26% 99%,1% 50%);aspect-ratio:1.04;overflow:hidden}
+.hex img{width:100%;height:100%;object-fit:cover}
+
+.arrows{list-style:none;padding:0;display:grid;gap:.9rem;font-weight:600}
+.arrows li{display:grid;grid-template-columns:36px 1fr;gap:.8rem;align-items:center}
+.arrows li::before{content:"";width:0;height:0;border:14px solid transparent;border-left:22px solid var(--blue-deep)}
+.cmp th:first-child{width:28%}
+.cmp thead th{background:var(--blue-deep);color:#fff;font-size:.8rem;letter-spacing:.04em;text-transform:none;font-family:var(--display)}
+.cmp tbody td:first-child{background:var(--blue-deep);color:#fff;font-family:var(--display);font-size:.8rem;font-weight:700}
+.cmp tbody td{border-bottom:1px solid var(--line)}
+.cmp tbody tr.hi td:not(:first-child){background:var(--cream)}
+.cmp td .good{color:var(--pass);font-weight:700}
+.specs{display:grid;gap:1rem}
+.specline{position:relative;padding-left:1.1rem}
+.specline::before{content:"";position:absolute;left:0;top:.25rem;bottom:.25rem;width:5px;background:var(--blue);transform:skewY(-30deg)}
+.specline b{font-family:var(--display);color:var(--blue)}
+
+/* ---------- RegExo ---------- */
+.regexo{display:grid;gap:1.5rem}
+@media (min-width:760px){.regexo{grid-template-columns:1fr 1fr}}
+.reg-card{border:1.5px solid var(--line);border-radius:22px;overflow:hidden;display:grid;grid-template-rows:auto 1fr}
+.reg-card .photo{border-radius:0;aspect-ratio:4/3}
+.reg-body{padding:1.3rem 1.4rem;display:grid;gap:.9rem;align-content:start}
+.reg-name{font-size:2rem;font-weight:800;color:var(--teal);letter-spacing:-.01em}
+.reg-tag{display:inline-block;background:var(--teal);color:#fff;font-family:var(--display);font-weight:800;font-size:.8rem;letter-spacing:.1em;padding:.35rem .9rem;border-radius:999px}
+.reg-list{list-style:none;padding:0;display:grid;gap:.4rem;font-family:var(--display);font-weight:700;font-size:.9rem;letter-spacing:.03em;text-transform:uppercase}
+.reg-list li::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--teal);margin-right:.6rem;vertical-align:middle}
+.reg-meta{font-size:.9rem;display:grid;gap:.35rem;color:var(--muted)}
+.reg-meta b{color:var(--fg)}
+.picto{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;font-size:.82rem;color:var(--muted)}
+.picto span{display:inline-flex;align-items:center;gap:.4rem}
+.picto svg{width:22px;height:22px}
+
+footer{padding-block:2rem 2.5rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);text-align:center}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="in">
+    <span class="brand">Exogent · Ycellbio PRP · RegExo</span>
+    <nav aria-label="Разделы">
+      <a href="#exogent">Exogent</a>
+      <a href="#ycellbio">Ycellbio PRP</a>
+      <a href="#regexo">RegExo</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===================================================== EXOGENT ===================================================== -->
+<section id="exogent" class="brochure">
+  <div class="wrap">
+
+    <div class="panel cover">
+      <div class="photo"><img src="images/exo_cover.jpg" alt="Лаборатория: специалист с пробиркой, чашки Петри и флакон Exogent" width="1200" height="1084"></div>
+      <div>
+        <p class="eyebrow">Брошюра 1 · Экзосомы</p>
+        <h1 style="margin-top:.6rem">Сила экзосом и&nbsp;Exogent</h1>
+        <p class="sub">Природные клеточные мессенджеры, созданные для передовой регенерации кожи и тканей</p>
+        <div class="crosses" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 class="h-brochure">Основные эффекты и области применения Exogent</h2>
+      <div class="effects" style="margin-top:1.8rem">
+        <div class="tile">
+          <h3 class="h-tile">Регенерация кожи и антивозрастной эффект</h3>
+          <ul>
+            <li>Снижает выработку меланина — кожа становится светлее.</li>
+            <li>Стимулирует синтез коллагена, разглаживая морщины.</li>
+            <li>Ускоряет обновление клеток кожи.</li>
+            <li>Запускает быстрое восстановление тканей.</li>
+          </ul>
+          <h3 class="h-tile">Здоровье волос и кожи головы</h3>
+          <ul>
+            <li>Предотвращает выпадение волос.</li>
+            <li>Стимулирует волосяные фолликулы.</li>
+          </ul>
+        </div>
+        <div class="tile">
+          <h3 class="h-tile">Неврологическая поддержка и сон</h3>
+          <ul>
+            <li>Стабилизирует нейроны, способствуя крепкому сну, и защищает их от деменции.</li>
+          </ul>
+        </div>
+        <div class="tile">
+          <h3 class="h-tile">Суставы и опорно‑двигательный аппарат</h3>
+          <ul>
+            <li>Регенерирует хрящевую ткань и снимает воспаление суставов.</li>
+          </ul>
+        </div>
+        <div class="tile">
+          <h3 class="h-tile">Иммунитет и противоопухолевая поддержка</h3>
+          <ul>
+            <li>Балансирует иммунную функцию и уменьшает воспаление.</li>
+            <li>Протестирован — подтверждена таргетная регуляция иммунитета.</li>
+            <li>Помогает воздействовать на рак толстой кишки, лёгких и печени.</li>
+          </ul>
+        </div>
+        <div class="center" aria-hidden="true">
+          <svg viewBox="0 0 72 72" fill="none" stroke="var(--blue)" stroke-width="2.4" stroke-linejoin="round">
+            <circle cx="36" cy="36" r="33" fill="var(--tile)" stroke="none"/>
+            <path d="M36 16l9 5v10l-9 5-9-5V21z"/><path d="M27 36l9 5v10l-9 5-9-5V41z"/><path d="M45 36l9 5v10l-9 5-9-5V41z"/>
+            <path d="M16 30a21 21 0 0 1 10-14M56 30a21 21 0 0 0-10-14M36 61a21 21 0 0 0 16-8" stroke-linecap="round"/>
+            <path d="M24 13l4 4-5 2zM53 42l2 6-6-1z" fill="var(--blue)"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 class="h-brochure">Безопасность по стандарту GLP и сертификат анализа (COA)</h2>
+      <div class="coa" style="margin-top:1.8rem">
+        <div class="box">
+          <h3><b>A.</b> Соответствие требованиям доклинической безопасности</h3>
+          <p>Строгие оценки по стандарту <b>GLP</b> подтверждают безопасность каждой партии:</p>
+          <ul class="safety-list">
+            <li>
+              <svg viewBox="0 0 34 34" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="17" cy="17" r="15" fill="var(--tile)"/><path d="M12 10v8M17 8v10M22 10v8M12 18a5 5 0 0 0 10 0"/></svg>
+              <span>Нетоксичен (тесты однократной и многократной дозы)</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 34 34" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="17" cy="17" r="15" fill="var(--tile)"/><path d="M17 8l8 3v6c0 5-3 8-8 10-5-2-8-5-8-10v-6z"/><path d="M13 17l3 3 5-6"/></svg>
+              <span>Не вызывает раздражения (тесты на коже, глазах и фототоксичность)</span>
+            </li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3><b>B.</b> Стандарты сертификата анализа партии (COA)</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Показатель</th><th>Результат</th><th>Спецификация</th><th>Статус</th></tr></thead>
+              <tbody>
+                <tr><td>Внешний вид</td><td>Слегка розоватая жидкость</td><td><small class="spec">—</small></td><td><span class="pass">PASS</span></td></tr>
+                <tr><td>Уровень pH</td><td>7,57</td><td><small class="spec">7,0–8,0</small></td><td><span class="pass">PASS</span></td></tr>
+                <tr><td>Общий белок</td><td>30,2 мкг/мл</td><td><small class="spec">≥ 15,0 мкг/мл</small></td><td><span class="pass">PASS</span></td></tr>
+                <tr><td>Абсолютная чистота</td><td>100 % отрицательно <small class="spec">(нет клеток и тканей исходного материала, контаминации и т.&nbsp;п.)</small></td><td><small class="spec">н/п</small></td><td><span class="pass">PASS</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 class="h-brochure">Блок‑схема: выделение плацентарных стволовых клеток и изоляция экзосом</h2>
+      <div class="flow" style="margin-top:1.8rem">
+        <div class="step">
+          <div class="num">1. Тестирование плаценты</div>
+          <div class="ico"><img src="images/exo_icon_placenta.jpg" alt="Плацента и чек-лист с отметкой «пройдено»"></div>
+          <p>Скрининг донора и проверка плаценты на патогенные маркеры.</p>
+          <div class="out">Проверенный донорский материал</div>
+        </div>
+        <div class="step">
+          <div class="num">2. Выделение клеток</div>
+          <div class="ico"><img src="images/exo_icon_extract.jpg" alt="Чашка с тканью, ножницы и колба: ферментативный лизат"></div>
+          <p>Обработка ткани и выделение стволовых клеток методом ферментативного расщепления.</p>
+          <div class="out">Клеточный лизат</div>
+        </div>
+        <div class="step">
+          <div class="num">3. Культивирование</div>
+          <div class="ico"><img src="images/exo_icon_culture.jpg" alt="Культуральный флакон со средой и CO₂"></div>
+          <p>Выращивание стволовых клеток в специализированной среде в контролируемых условиях.</p>
+          <div class="out">Популяция стволовых клеток</div>
+        </div>
+        <div class="step">
+          <div class="num">4. Изоляция экзосом</div>
+          <div class="ico"><img src="images/exo_icon_exosome.jpg" alt="Экзосомы с маркерами CD63, CD81 и пробирка"></div>
+          <p>Очистка и сбор конечной популяции экзосом.</p>
+          <div class="out">Готовый продукт</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel cols cols-2-1">
+      <div>
+        <h2 class="h-tile" style="font-size:1.4rem">Почему Exogent выделяется:</h2>
+        <div class="why" style="margin-top:1.2rem">
+          <div class="item"><span class="tri"></span><div>
+            <h4>Первый в мире контроль качества по GSH в живых клетках</h4>
+            <p>Exogent производится по собственной технологии Metropobio — первой в мире системе, измеряющей уровень глутатиона (GSH) в живых клетках в режиме реального времени.</p>
+          </div></div>
+          <div class="item"><span class="tri"></span><div>
+            <h4>Четыре ключевых параметра GSH</h4>
+            <p>Платформа оценивает состояние стволовых клеток по четырём показателям: средний уровень глутатиона (GM), гетерогенность глутатиона (GH), способность к регенерации глутатиона (GRC) и устойчивость к окислительному стрессу (ORC).</p>
+          </div></div>
+          <div class="item"><span class="tri"></span><div>
+            <h4>Отбор высококачественных стволовых клеток</h4>
+            <p>Из материала разных доноров выделяются стволовые клетки высшего качества (HQ‑SC), поэтому каждая производственная партия даёт равномерное распределение частиц, высокую антиоксидантную ёмкость и быструю пролиферацию.</p>
+          </div></div>
+        </div>
+      </div>
+      <div class="cols" style="gap:.8rem">
+        <div class="photo"><img src="images/exo_vial.jpg" alt="Флакон Exogent на лабораторном столе" width="510" height="510"></div>
+        <div class="cols cols-3" style="gap:.6rem;grid-template-columns:repeat(3,1fr)">
+          <div class="photo" style="aspect-ratio:3/4"><img src="images/exo_cryo1.jpg" alt="Криохранилище: извлечение контейнера из дьюара"></div>
+          <div class="photo" style="aspect-ratio:3/4"><img src="images/exo_cryo2.jpg" alt="Криопробирка с образцом в парах азота"></div>
+          <div class="photo" style="aspect-ratio:3/4"><img src="images/exo_cryo3.jpg" alt="Криопробирки с образцами в дьюаре"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================================================== YCELLBIO PRP ===================================================== -->
+<section id="ycellbio" class="brochure">
+  <div class="wrap">
+
+    <div class="panel cover">
+      <div>
+        <p class="eyebrow">Брошюра 2 · PRP‑система</p>
+        <span class="stripe" aria-hidden="true" style="margin-top:.9rem"></span>
+        <h1 style="margin-top:.6rem;text-transform:uppercase;font-size:clamp(1.6rem,4vw,2.8rem)">Ycellbio PRP:<br>оптимальная система регенеративной терапии</h1>
+        <span class="stripe" aria-hidden="true" style="margin-top:1rem"></span>
+        <p class="sub caps">Самая востребованная в мире передовая система PRP со стволовыми клетками, созданная для превосходных клинических результатов.</p>
+      </div>
+      <div class="photo" style="border-radius:0 0 0 90px"><img src="images/prp_cover.jpg" alt="Рука в перчатке держит набор Ycellbio PRP с отделённой плазмой" width="890" height="780"></div>
+    </div>
+
+    <div class="panel cols cols-2">
+      <div class="cols" style="gap:1rem">
+        <h2 class="h-tile" style="font-size:1.5rem">Что такое PRP?</h2>
+        <ul style="font-weight:500">
+          <li>Использует факторы роста, содержащиеся в тромбоцитах</li>
+          <li>Поддерживает естественные процессы регенерации кожи</li>
+          <li>Аутологичный подход — используется собственная кровь пациента</li>
+        </ul>
+        <p class="kp">Ключевые моменты</p>
+        <ul style="font-weight:500">
+          <li>Терапия на основе собственной крови пациента</li>
+          <li>Принцип: отделение и применение обогащённой тромбоцитами плазмы</li>
+        </ul>
+        <div class="photo"><img src="images/prp_stages6.jpg" alt="Шесть наборов Ycellbio на разных стадиях разделения крови" width="840" height="280"></div>
+      </div>
+      <div class="cols" style="gap:1rem">
+        <h2 class="h-tile" style="font-size:1.5rem">Что такое Ycellbio PRP?</h2>
+        <p>Ycellbio PRP — оптимальная система для сепарации обогащённой тромбоцитами плазмы. С клинической точки зрения обогащённая тромбоцитами плазма (PRP) — это объём аутологичной плазмы с концентрацией тромбоцитов <b>более 1 миллиона на микролитр</b>, то есть в 4–5 раз (и более) выше исходного уровня.</p>
+        <div class="layers-row">
+          <div class="photo" style="width:min(60vw,200px)"><img src="images/prp_layers.jpg" alt="Набор Ycellbio с тремя слоями крови и увеличенным фрагментом"></div>
+          <div class="cols" style="gap:.9rem">
+            <p style="font-weight:600">При сепарации цельной крови система Ycellbio чётко делит её на три основных слоя:</p>
+            <div class="layers">
+              <span class="k">Плазма (55 %)</span><span class="v">верхний слой</span>
+              <span class="k">Лейкоцитарная плёнка (&lt; 1 %)</span><span class="v">лейкоциты и тромбоциты</span>
+              <span class="k">Эритроциты (45 %)</span><span class="v">нижний слой</span>
+            </div>
+          </div>
+        </div>
+        <div class="gf" aria-label="Факторы роста"><span>PDGF</span><span>FGF</span><span>TGF‑β</span><span>EGF</span><span>IGF</span><span>VEGF</span><em class="muted" style="font-size:.85rem">— факторы роста, содержащиеся в тромбоцитах</em></div>
+      </div>
+    </div>
+
+    <div class="panel cols cols-1-2">
+      <div class="cols" style="gap:1rem;align-content:start">
+        <div class="photo"><img src="images/prp_kit_diagram.jpg" alt="Набор Ycellbio: увеличенные фрагменты горлышка и сравнение диаметров 7 мм и 12 мм" width="740" height="640"></div>
+        <p class="muted" style="font-size:.85rem">Полезная модель запатентована · подана заявка PCT</p>
+      </div>
+      <div>
+        <h2 class="h-tile" style="font-size:1.5rem">Ключевая технология:</h2>
+        <div class="phases" style="margin-top:1.2rem">
+          <div class="phase">
+            <div><h4>Технология высокого обогащения</h4><p>Разработана, чтобы преодолеть традиционные ограничения — потерю тромбоцитов при центрифугировании и «пустой» объём широких пробирок.</p></div>
+            <div class="ball">Фаза<b>01</b></div>
+          </div>
+          <div class="phase">
+            <div><h4>Оригинальное узкое горлышко</h4><p>Внутренний диаметр всего 7 мм позволяет хорошо видеть лейкоцитарную плёнку и плотно концентрировать её, сводя к минимуму тромбоциты, оседающие на стенках.</p></div>
+            <div class="ball">Фаза<b>02</b></div>
+          </div>
+          <div class="phase">
+            <div><h4>Регулятор UP&amp;DOWN</h4><p>Поворотный регулятор в основании набора позволяет легко менять высоту слоя клеток крови, обеспечивая точное позиционирование границы.</p></div>
+            <div class="ball">Фаза<b>03</b></div>
+          </div>
+          <div class="phase">
+            <div><h4>Техника «Торнадо»</h4><p>Максимизирует сбор PRP, эффективно исключая эритроциты (RBC).</p></div>
+            <div class="ball">Фаза<b>04</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel cols cols-2">
+      <div class="cols" style="gap:1.4rem;align-content:start">
+        <h2 class="h-tile" style="font-size:1.5rem">Как это работает:</h2>
+        <div class="how">
+          <div class="row">
+            <div class="drop" aria-hidden="true"><svg viewBox="0 0 38 38" fill="none" stroke="#fff" stroke-width="1.8"><path d="M19 7l8 4.5v9L19 25l-8-4.5v-9z"/><circle cx="19" cy="7" r="2"/><circle cx="27" cy="11.5" r="2"/><circle cx="27" cy="20.5" r="2"/><circle cx="19" cy="25" r="2"/><circle cx="11" cy="20.5" r="2"/><circle cx="11" cy="11.5" r="2"/><path d="M19 25v7"/></svg></div>
+            <div><h4>Забор и сбор крови:</h4><p>Минимальный объём крови — <b>13,5–15 мл</b> с 1,5 мл антикоагулянта.</p></div>
+          </div>
+          <div class="row">
+            <div class="drop" aria-hidden="true"><svg viewBox="0 0 38 38" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="19" cy="19" r="3"/><circle cx="8" cy="12" r="2.5"/><circle cx="30" cy="12" r="2.5"/><circle cx="8" cy="27" r="2.5"/><circle cx="30" cy="27" r="2.5"/><circle cx="19" cy="6" r="2.5"/><path d="M10 13.5l6.5 4M28 13.5l-6.5 4M10 25.5l6.5-4M28 25.5l-6.5-4M19 8.5V16"/></svg></div>
+            <div><h4>Центрифугирование:</h4><p>Выполняется на любой стандартной центрифуге — набор полностью совместим с бакет‑роторами и угловыми роторами.</p></div>
+          </div>
+          <div class="row">
+            <div class="drop" aria-hidden="true"><svg viewBox="0 0 38 38" fill="none" stroke="#fff" stroke-width="1.8"><ellipse cx="19" cy="19" rx="14" ry="6"/><ellipse cx="19" cy="19" rx="14" ry="6" transform="rotate(60 19 19)"/><ellipse cx="19" cy="19" rx="14" ry="6" transform="rotate(-60 19 19)"/><circle cx="19" cy="19" r="2.2" fill="#fff"/></svg></div>
+            <div><h4>Извлечение PRP:</h4><p>Поверните нижний регулятор, чтобы точно поднять слой клеток крови и выровнять границу для чистой аспирации.</p></div>
+          </div>
+        </div>
+        <div class="process">
+          <h3>Процесс</h3>
+          <div class="ring">
+            <figure><img src="images/prp_proc1.jpg" alt="Забор крови из вены"><figcaption>Забор крови</figcaption></figure>
+            <figure><img src="images/prp_proc2.jpg" alt="Введение крови в набор Ycellbio"><figcaption>Введение в набор</figcaption></figure>
+            <figure><img src="images/prp_proc3.jpg" alt="Наборы в роторе центрифуги"><figcaption>Центрифугирование</figcaption></figure>
+            <figure><img src="images/prp_proc4.jpg" alt="Отделённая плазма в наборе"><figcaption>Извлечение PRP</figcaption></figure>
+          </div>
+        </div>
+      </div>
+      <div class="cols" style="gap:1.4rem;align-content:start">
+        <h2 class="h-tile" style="font-size:1.5rem">Основные показания:</h2>
+        <ul class="checks">
+          <li><svg viewBox="0 0 28 28" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="14" r="11"/><path d="M8 14l4 4 8-9"/></svg><span>Естественное омоложение кожи, улучшение текстуры и повышение жизнеспособности клеток.</span></li>
+          <li><svg viewBox="0 0 28 28" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="14" r="11"/><path d="M8 14l4 4 8-9"/></svg><span>Антивозрастные процедуры против мелких морщин методом аутологичной регенеративной терапии.</span></li>
+          <li><svg viewBox="0 0 28 28" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="14" r="11"/><path d="M8 14l4 4 8-9"/></svg><span>Восстановление волос и тканей за счёт концентрированных факторов роста.</span></li>
+        </ul>
+        <div class="photo"><img src="images/prp_3stages.jpg" alt="Набор Ycellbio: пустой, заполненный кровью и после центрифугирования" width="760" height="340"></div>
+        <div class="photo"><img src="images/prp_kit.jpg" alt="Набор Ycellbio PRP крупным планом" style="max-height:420px;object-fit:contain;background:var(--tile-2)"></div>
+      </div>
+    </div>
+
+    <div class="panel cols cols-2">
+      <div>
+        <h2 class="h-brochure left">Клинические преимущества:</h2>
+        <div class="adv" style="margin-top:1.6rem">
+          <div><span class="pillhead">Высокий выход и чистота</span><p style="margin-top:.6rem">Обеспечивает плотную концентрацию тромбоцитов свыше <b>1 500 000–1 604 000/мкл</b> (в 7–9 раз выше исходного уровня) по сравнению с менее производительными плазменными системами.</p></div>
+          <div><span class="pillhead">Концентрированные факторы роста (CGF)</span><p style="margin-top:.6rem">При активации высвобождает жизненно важные биоактивные факторы роста: PDGF, TGF‑β, FGF, VEGF, EGF и IGF.</p></div>
+          <div><span class="pillhead">Высокая эффективность из малого объёма</span><p style="margin-top:.6rem">Достигает максимальной концентрации всего из <b>13,5–15 мл</b> цельной крови, устраняя необходимость в больших заборах 25–60 мл, которые требуют пробирки в форме песочных часов.</p></div>
+          <div><span class="pillhead">Нулевая контаминация эритроцитами</span><p style="margin-top:.6rem">Эффективно предотвращает попадание эритроцитов в извлекаемую плазму, обеспечивая чистый высококонцентрированный образец PRP, что подтверждено сравнением мазков периферической крови и PRP.</p></div>
+        </div>
+      </div>
+      <div class="cols" style="gap:1rem;align-content:end">
+        <div class="hexes">
+          <div class="hex"><img src="images/prp_doctors.jpg" alt="Два врача держат наборы Ycellbio с отделённой плазмой"></div>
+          <div class="hex"><img src="images/prp_hex2.jpg" alt="Набор Ycellbio в руке крупным планом"></div>
+          <div class="hex"><img src="images/prp_hex3.jpg" alt="Специалист извлекает плазму из набора"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel cols cols-2">
+      <div class="cols" style="gap:1.4rem;align-content:start">
+        <h2 class="h-tile" style="font-size:1.5rem">Протокол процедуры:</h2>
+        <ul class="arrows">
+          <li>Простой рабочий процесс из 5–6 шагов, минимизирующий сложность для персонала клиники.</li>
+          <li>Выход 1–1,5 мл высокоактивной PRP из одного набора для непосредственного клинического применения.</li>
+          <li>Аутологичная, безопасная процедура: элементы собственной крови пациента запускают естественные регенеративные процессы.</li>
+        </ul>
+        <h2 class="h-tile" style="font-size:1.5rem">Характеристики / безопасность:</h2>
+        <div class="specs">
+          <p class="specline"><b>Состав.</b> Компоненты цельной крови чётко разделяются на плазму (55 %), лейкоцитарную плёнку (&lt; 1 %, содержит лейкоциты и тромбоциты) и эритроциты (45 %).</p>
+          <p class="specline"><b>Универсальная совместимость.</b> Работает со всеми типами центрифуг без специального оборудования.</p>
+          <p class="specline"><b>Повышенная безопасность.</b> Узкое горлышко и нижний регулятор предотвращают случайную аспирацию эритроцитов, гарантируя чистую, хорошо видимую границу.</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="cmp">
+          <thead><tr><th></th><th>Пробирки в форме песочных часов<br><small>(устаревшие системы)</small></th><th>Набор YCELLBIO‑KIT<br><small>(современная система)</small></th></tr></thead>
+          <tbody>
+            <tr><td>Конструкция</td><td>Несколько компонентов</td><td class="good">Единый интегрированный блок</td></tr>
+            <tr class="hi"><td>Объём крови</td><td>25–60 мл</td><td class="good">13,5 мл</td></tr>
+            <tr class="hi"><td>Объём антикоагулянта</td><td>3–6 мл</td><td class="good">1,5 мл</td></tr>
+            <tr><td>Концентрация PRP</td><td>4–5× <small class="spec">(заявленная)</small></td><td class="good">7–9×</td></tr>
+            <tr><td>Совместимость с центрифугами</td><td>Требуется специальная центрифуга</td><td class="good">Любая стандартная центрифуга</td></tr>
+            <tr><td>Стоимость процедуры</td><td>Выше</td><td class="good">Разумная</td></tr>
+            <tr><td>Этапы и сложность</td><td>Сложно: 7–8 шагов, ручные вмешательства</td><td class="good">Просто: 5–6 шагов, в основном автоматизировано</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================================================== REGEXO ===================================================== -->
+<section id="regexo" class="brochure">
+  <div class="wrap">
+    <p class="eyebrow">Препарат · упаковка</p>
+    <h2 class="h-brochure" style="margin-top:.6rem">RegExo — премиальный экзосомный бустер для кожи</h2>
+    <div class="regexo" style="margin-top:1.8rem">
+      <div class="reg-card">
+        <div class="photo"><img src="images/regexo_front.jpg" alt="Коробка RegExo Premium Exosome Skin Booster и флакон 5 мл" width="1200" height="1354"></div>
+        <div class="reg-body">
+          <p class="reg-name">RegExo</p>
+          <p style="font-weight:600;font-size:1.05rem">Premium Exosome Skin Booster — премиальный экзосомный бустер для кожи</p>
+          <span class="reg-tag">Premium Solution</span>
+          <p style="font-weight:700">Усиливает регенерацию кожи<br><span class="muted" style="font-weight:600;letter-spacing:.06em">TOTAL SOLUTION — комплексное решение</span></p>
+          <p class="muted">Объём: <b style="color:var(--fg)">5 мл</b> / 0,16 fl. oz</p>
+        </div>
+      </div>
+      <div class="reg-card">
+        <div class="photo"><img src="images/regexo_side.jpg" alt="Боковая сторона коробки RegExo с описанием и крышка флакона" width="1200" height="1248"></div>
+        <div class="reg-body">
+          <p style="font-family:var(--display);font-weight:800;font-size:1.1rem;color:var(--teal)">Derma Exosome Time Regenerating Booster<br><span class="muted" style="font-weight:600;font-size:.95rem">Регенерирующий бустер «Derma Exosome Time»</span></p>
+          <p style="font-weight:600">Повышает эластичность · Разглаживает морщины · Улучшает текстуру кожи · Усиливает увлажнение · Выравнивает тон кожи · Доказанная стабильность</p>
+          <ul class="reg-list">
+            <li>PDRN</li>
+            <li>Snow Whitening — осветление</li>
+            <li>Уход за проблемной кожей и акне</li>
+            <li>Омоложение</li>
+          </ul>
+          <p style="font-weight:700;color:var(--teal)">Реальный эффект, мгновенный результат</p>
+          <div class="reg-meta">
+            <span><b>Хранение:</b> при прохладной комнатной температуре</span>
+            <span><b>Стерильный продукт</b></span>
+            <span><b>Дистрибьютор:</b> Regentime Corp., г. Пучхон, провинция Кёнгидо, Южная Корея</span>
+            <span>Номер партии и срок годности указаны отдельно на упаковке</span>
+          </div>
+          <div class="picto" aria-label="Пиктограммы на упаковке">
+            <span><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="9"/><path d="M5 5l12 12M9 7h4v3l-2 3v4"/></svg>Не использовать повторно</span>
+            <span><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="16" height="8" rx="1"/><path d="M6 11h6"/></svg>Стерильно</span>
+            <span><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 3v12M8 15a3 3 0 1 0 6 0"/><path d="M11 6h3M11 9h3"/></svg>Соблюдать температуру хранения</span>
+            <span><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="9" r="3"/><path d="M11 2v2M18 9h-2M4 9h2M16 4l-1.4 1.4M6 4l1.4 1.4M5 19h12l-2-5H7z"/></svg>Беречь от солнечных лучей</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">Цифровая версия печатных брошюр Exogent и Ycellbio PRP и упаковки RegExo. Перевод с английского.</div>
+</footer>
+
+</body>
+</html>
